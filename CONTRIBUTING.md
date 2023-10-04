@@ -116,7 +116,6 @@ We want your work to be readable by others; therefore, we encourage you to follo
 ## My Algorithm
 ##
 ## Description, explanation, recommendations, sources, links.
->>>>>>> main
 {.push raises: [].}
 
 runnableExamples:
