@@ -15,11 +15,12 @@ type
     data: T
     leftChild, rightChild: BinarySearchTree[T]
 
-proc initBinarySearchTree[T](data: T): BinarySearchTree[T] =
+proc initBinarySearchTree*[T](data: T): BinarySearchTree[T] =
   new(result)
   result.data = data
 
-proc insert[T](root: var BinarySearchTree[T], newValue: T) =
+proc insert*[T](root: var BinarySearchTree[T], newValue: T) =
+  ## Adds a node to an initialized binary search tree.
   if root == nil:
     root = initBinarySearchTree[T](newValue)
   if newValue < root.data:
@@ -27,13 +28,12 @@ proc insert[T](root: var BinarySearchTree[T], newValue: T) =
   elif newValue > root.data:
     insert[T](root.rightChild, newValue)
 
-proc insert[T](root: var BinarySearchTree[T], values: seq[T]) =
+proc insert*[T](root: var BinarySearchTree[T], values: seq[T]) =
+  ## Adds a list of nodes to an initialized binary search tree.
   for value in values:
     insert[T](root, value)
 
 proc printBstRec(tree: BinarySearchTree) =
-  ## Outputs a binary search tree following the infix notation.
-  ## The type T must have a `$` proc.
   if tree != nil:
     stdout.write($tree.data & " ")
     if tree.leftChild != nil:
@@ -43,23 +43,39 @@ proc printBstRec(tree: BinarySearchTree) =
       stdout.write(">")
       printBstRec(tree.rightChild)
 
-proc printBst(tree: BinarySearchTree) =
-  ## Ensures we have an end of line.
+proc printInfixBstRec*(tree: BinarySearchTree): string =
+  ## Outputs data of a binary search tree in a sorted manner.
+  if tree != nil:
+    result = result & printInfixBstRec(tree.leftChild)
+    result = result & $tree.data & " "
+    result = result & printInfixBstRec(tree.rightChild)
+
+proc printPostfixBstRec*(tree: BinarySearchTree) =
+  if tree != nil:
+    printPostfixBstRec(tree.leftChild)
+    printPostfixBstRec(tree.rightChild)
+    stdout.write($tree.data & " ")
+
+proc printPrefixBst*(tree: BinarySearchTree) =
+  ## Outputs a binary search tree following the preorder traversal (prefix notation).
+  ## The type T must have a `$` proc.
+  ## Ensures we have an end of line at the end of the output.
   if tree != nil:
     printBstRec(tree)
     echo()
 
-proc printInfixBstRec(tree: BinarySearchTree) =
-  ## Outputs data of a binary search tree in a sorted manner.
+proc `$`*(tree: BinarySearchTree): string =
+  ## Default output of a binary search tree outputs elements
+  ##  encountered in an inorder traversal.
   if tree != nil:
-    printInfixBstRec(tree.leftChild)
-    stdout.write($tree.data & " ")
-    printInfixBstRec(tree.rightChild)
+    return printInfixBstRec(tree) & "\n"
 
-proc printInfixBst(tree: BinarySearchTree) =
-  ## Ensures there is an end of line in the end.
+proc printPostfixBst*(tree: BinarySearchTree) =
+  ## Outputs a binary search tree following the postorder traversal (postfix notation).
+  ## The type T must have a `$` proc.
+  ## Ensures we have an end of line at the end of the output.
   if tree != nil:
-    printInfixBstRec(tree)
+    printPostfixBstRec(tree.left)
     echo()
 
 proc search[T](tree: BinarySearchTree, data: T): bool =
@@ -124,8 +140,8 @@ proc balanceInsert[T](t: var BinarySearchTree, data: T) =
 when isMainModule:
   var root = initBinarySearchTree[int](13)
   insert[int](root, @[10, 10, 17, 8, 12, 9, 23, 20, 15])
-  printBst(root)
-  printInfixBst(root)
+  printPrefixBst(root)
+  echo $root
   echo("Is 6 in the BST?: ", search(root, 6))
   assert root.data == 13
   assert root.leftChild.data == 10
@@ -136,7 +152,7 @@ when isMainModule:
 
   var test = initBinarySearchTree[int](4)
   insert[int](test, @[2,3,1])
-  printBst(test) # 4 <2 <1 >3
-  printInfixBst(test)
+  printPrefixBst(test) # 4 <2 <1 >3
+  echo $test
   test = rotateRight(test)
-  printBst(test) # 2 <1 >4 <3
+  printPrefixBst(test) # 2 <1 >4 <3
