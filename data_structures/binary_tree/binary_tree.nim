@@ -78,7 +78,7 @@ proc printPostfixBst*(tree: BinarySearchTree) =
     printPostfixBstRec(tree.left)
     echo()
 
-proc search[T](tree: BinarySearchTree, data: T): bool =
+proc search*[T](tree: BinarySearchTree, data: T): bool =
   ## Finds a value in the Binary Search Tree in O(log(n)).
   if tree == nil: return false
   elif tree.data == data: return true
@@ -88,7 +88,7 @@ proc search[T](tree: BinarySearchTree, data: T): bool =
     else:
       return search(tree.rightChild, data)
 
-proc height(tree: BinarySearchTree): int =
+proc height*(tree: BinarySearchTree): int =
   ## Useful for maintaining an AVL tree during insertion of an element.
   if tree == nil:
     return -1
@@ -99,7 +99,7 @@ proc height(tree: BinarySearchTree): int =
 ## A rotation inverts the position of the root with its children and 
 ## moves a subtree to the new children. When rotating, one preserves
 ## the order of the elements.
-proc rotateRight(tree: BinarySearchTree): BinarySearchTree =
+proc rotateRight*(tree: BinarySearchTree): BinarySearchTree =
   if tree.leftChild == nil: return tree
   let g = tree.leftChild
   let v = g.rightChild
@@ -107,7 +107,7 @@ proc rotateRight(tree: BinarySearchTree): BinarySearchTree =
   tree.leftChild = v
   return g
 
-proc rotateLeft(tree: BinarySearchTree): BinarySearchTree =
+proc rotateLeft*(tree: BinarySearchTree): BinarySearchTree =
   if tree.rightChild == nil: return 
   let g = tree.rightChild
   let v = g.leftChild
@@ -115,7 +115,7 @@ proc rotateLeft(tree: BinarySearchTree): BinarySearchTree =
   tree.rightChild = v
   return g
 
-proc balanceBST(t: var BinarySearchTree) =
+proc balanceBST*(t: var BinarySearchTree) =
   ## To balance a binary search tree, we need to perform at most 
   ## two rotations.
   let hg = height(t.leftChild)
@@ -132,7 +132,7 @@ proc balanceBST(t: var BinarySearchTree) =
       t.rightChild = rotateRight(t.rightChild)
     t = rotateLeft(t)
 
-proc balanceInsert[T](t: var BinarySearchTree, data: T) =
+proc balanceInsert*[T](t: var BinarySearchTree, data: T) =
   ## Keep the tree balanced after an insertion.
   insert[T](t, data)
   balanceBST(t)
